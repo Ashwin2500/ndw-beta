@@ -17,11 +17,11 @@ setup(
     packages=find_packages(),  # Includes ndw, ndw.functions, etc.
     python_requires=">=3.7",
     install_requires=[
-        "aiohttp>=3.8.0",
+        "websockets"
+        
     ],
     include_package_data=True,
     zip_safe=False,
     license="MIT",  # Change to your preferred license
     keywords="",                                                           ### TO UPDATE
 )
-
