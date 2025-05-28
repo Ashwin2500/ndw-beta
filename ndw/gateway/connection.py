@@ -4,14 +4,6 @@ import asyncio
 import logging
 
 DISCORD_GATEWAY_URL = "wss://gateway.discord.gg/?v=10&encoding=json"
-BOT_TOKEN = None
-
-def connect(TOKEN,logging_level):
-    global BOT_TOKEN
-    BOT_TOKEN = TOKEN
-    logging.basicConfig(level=logging.INFO)
-    asyncio.run(listen())
-
 
 async def heartbeat(ws, interval, sequence):
     while True:
@@ -57,4 +49,8 @@ async def listen():
                 logging.warning("Connection closed, reconnecting")
                 break
 
-asyncio.run(listen())
+def connect(TOKEN,logging_level):
+    global BOT_TOKEN
+    BOT_TOKEN = TOKEN
+    logging.basicConfig(level=logging.INFO)
+    asyncio.run(listen())

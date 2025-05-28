@@ -1,5 +1,5 @@
-from functions import *
-from gateway import *
+from .functions import *
+from .gateway import *
 
 class bot:
     def __init__(self,TOKEN) -> None:
