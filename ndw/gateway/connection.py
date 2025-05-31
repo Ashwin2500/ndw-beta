@@ -2,6 +2,7 @@ import websockets
 import json
 import asyncio
 import logging
+from .handler import set_user_handelers, handle
 
 DISCORD_GATEWAY_URL = "wss://gateway.discord.gg/?v=10&encoding=json"
 
@@ -80,6 +81,8 @@ async def listen(url, use_resume=False):
                     logging.warning("Reconnecting")
                     break
 
+                await handle(event)
+
             except websockets.exceptions.ConnectionClosed as e:
                 logging.info(f"Connection closed: {e.code} - {e.reason}")
                 codes = [4004, 4010, 4011, 4012, 4013, 4014]
@@ -90,7 +93,7 @@ async def listen(url, use_resume=False):
                     recon = True
                 break
 
-def connect(token, logging_level):
+def connect(token, logging_level, user_handlers):
     global BOT_TOKEN, recon
     BOT_TOKEN = token
     level_map = {
@@ -101,6 +104,8 @@ def connect(token, logging_level):
         50: logging.CRITICAL
         }
     logging.basicConfig(level=level_map.get(logging_level))
+
+    set_user_handelers(user_handlers)
 
     asyncio.run(listen(DISCORD_GATEWAY_URL))
 
