@@ -20,7 +20,7 @@ async def heartbeat(ws, interval):
             "d": seq
         }
         await ws.send(json.dumps(payload))
-        logging.info("Heartbeat sent")
+        logging.debug("Heartbeat sent")
         await asyncio.sleep(interval)
 
 async def identify(ws):
@@ -37,7 +37,7 @@ async def identify(ws):
         }
     }
     await ws.send(json.dumps(payload))
-    logging.info("Identify payload sent")
+    logging.debug("Identify payload sent")
 
 async def resume(ws):
     payload = {
@@ -49,13 +49,13 @@ async def resume(ws):
         }
     }
     await ws.send(json.dumps(payload))
-    logging.info("Resume payload sent")
+    logging.debug("Resume payload sent")
 
 async def listen(url, use_resume=False):
-    global RECONNECT_URL, session_id, seq, recon
+    global RECONNECT_URL, session_id, seq, recon, bot_obj
     async with websockets.connect(url) as ws:
         event = json.loads(await ws.recv())
-        logging.info(f"Received HELLO event: {event}")
+        logging.debug(f"Received HELLO event: {event}")
 
         heartbeat_interval = event['d']['heartbeat_interval'] / 1000
         asyncio.create_task(heartbeat(ws, heartbeat_interval))
@@ -68,7 +68,7 @@ async def listen(url, use_resume=False):
         while True:
             try:
                 event = json.loads(await ws.recv())
-                logging.info(f"Received event: {event}")
+                logging.debug(f"Received event: {event}")
                 seq = event.get("s", seq)
 
                 if event.get("t") == "READY":
@@ -81,7 +81,7 @@ async def listen(url, use_resume=False):
                     logging.warning("Reconnecting")
                     break
 
-                await handle(event)
+                await handle(event, bot_obj)
 
             except websockets.exceptions.ConnectionClosed as e:
                 logging.info(f"Connection closed: {e.code} - {e.reason}")
@@ -93,8 +93,9 @@ async def listen(url, use_resume=False):
                     recon = True
                 break
 
-def connect(token, logging_level, user_handlers):
-    global BOT_TOKEN, recon
+def connect(token, logging_level, user_handlers, bot):
+    global BOT_TOKEN, recon, bot_obj
+    bot_obj = bot
     BOT_TOKEN = token
     level_map = {
         10: logging.DEBUG,

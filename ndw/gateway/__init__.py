@@ -1,4 +1,4 @@
 from .connection import connect
 
 #### EVENTS
-from . import *
+from . import ready

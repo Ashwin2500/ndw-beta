@@ -21,13 +21,13 @@ def extractor(event_name):
         return func
     return decorator
 
-async def handle(event):
+async def handle(event, bot):
     event_name = event.get('t')
     if not event_name:
         return
     
     if event_name in event_handlers:
-        await event_handlers[event_name](event)
+        await event_handlers[event_name](event,bot)
     data = None
     if event_name in extractors:
         data = extractors[event_name](event)
