@@ -4,5 +4,3 @@ from .handler import register
 async def ready(event):
     pass
 
-def extract_ready(event):
-    pass
